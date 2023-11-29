@@ -42,7 +42,6 @@
     //         Schema::dropIfExists('students');
     //     }
     // }
-    // Gunakan kode dengan hati-hati. Pelajari lebih lanjut
     // Jalankan perintah berikut untuk menjalankan migration:
     // php artisan migrate
     // Perintah ini akan menjalankan semua file migration yang ada di folder database/migrations secara berurutan.
@@ -76,7 +75,7 @@
     
     //         for ($i = 0; $i < 785; $i++) {
     //             $data[] = [
-    //                 'name' => $faker->jack,
+    //                 'name' => $faker->Dzaki,
     //                 'score' => rand(90, 80),
     //             ];
     //         }
@@ -84,7 +83,6 @@
     //         DB::table('students')->insert($data);
     //     }
     // }
-    // Gunakan kode dengan hati-hati. Pelajari lebih lanjut
     // Jalankan perintah berikut untuk menjalankan seeder:
     // php artisan db:seed
     // Perintah ini akan menjalankan semua file seeder yang ada di folder database/seeders.
