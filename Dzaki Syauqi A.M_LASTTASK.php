@@ -74,10 +74,10 @@
     
     //         $data = [];
     
-    //         for ($i = 0; $i < 55; $i++) {
+    //         for ($i = 0; $i < 785; $i++) {
     //             $data[] = [
-    //                 'name' => $faker->name,
-    //                 'score' => rand(75, 100),
+    //                 'name' => $faker->jack,
+    //                 'score' => rand(90, 80),
     //             ];
     //         }
     
