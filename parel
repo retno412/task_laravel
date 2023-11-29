@@ -1,0 +1,136 @@
+<?php
+
+/**
+ * Rangkuman Migration, Seeder dan MVC
+ * 
+ * 1. Migration
+ * Migration adalah proses untuk membuat atau mengubah struktur database.
+ * Dengan migration, kita bisa membuat tabel baru, menambahkan kolom, atau mengubah tipe data kolom.
+ * Contoh Migration:
+ * Buat migration baru dengan perintah artisan: php artisan make:migration nama_migration
+ * Edit file migration yang baru dibuat di direktori database/migrations.
+ * 
+ * Langkah-langkah:
+ * a. Open terminal 
+ * b. Buat migration baru: php artisan make:migration create_nama_tabel
+ * c. Edit file migration yang dibuat:
+ * Tentukan nama tabel dan kolom-kolomnya
+ * Tentukan tipe data, panjang, nullable, default value, dll.
+ * d. Jalankan migration: php artisan migrate
+ * e. Jika ingin rollback atau menghapus migration: php artisan migrate:rollback
+ * Migrasi disimpan di direktori database/migrations.
+ * 
+ * 
+ * 
+ * 2. Seeder
+ * Seeder digunakan untuk mengisi data awal ke dalam tabel database, Seeder membantu dalam pengembangan dan pengujian aplikasi.
+ * Dengan seeder, kita bisa membuat data dummy atau data awal yang dibutuhkan.
+ * 
+ * Langkah-langkah:
+ * a. Open Terminal
+ * b. Buat seeder baru: php artisan make:seeder NamaSeeder
+ * c. Tentukan data yang ingin di-generate atau diisi.
+ * Contoh : 
+ * $data = [
+ * ['id' => 1, 'name' => 'moker', 'score' => 82],
+ * ['id' => 2, 'name' => 'dul', 'score' => 83],
+ * ['id' => 3, 'name' => 'nachel', 'score' => 89],
+ * ];
+ *      DB::table('students')->insert($data);
+ * d. Jalankan seeder: php artisan db:seed --class=NamaSeeder
+ * e. Jika ingin melakukan seeding secara otomatis pada saat migration:
+ * -Tambahkan pemanggilan seeder di dalam file DatabaseSeeder.php
+ * (di direktori database/seeders).
+ * 
+ * 
+ * 
+ * 3. MVC
+ * Laravel menggunakan pola desain MVC untuk memisahkan logika aplikasi menjadi tiga komponen utama
+ * yaitu Model, Views dan Controller.
+ * 
+ * I. Model
+ * Bertanggung jawab untuk berinteraksi dengan database, Mewakili struktur data dan aturan bisnis aplikasi,
+ * Biasanya terdapat di dalam direktori app/Models.
+ * Representasi dari struktur data yang diambil dari database atau sumber data lainnya.
+ * Terletak di dalam direktori app/Models.
+ * Langkah-Langkah : 
+ * a. Open terminal pada 'app\Http\Models'
+ * b. Buat Model Baru: bash php artisan make:model NamaModel
+ * c. Tentukan kode yang akan di-generete atau diperlukan.
+ * Contoh 
+ * namespace App\Models;
+ *      use Illuminate\Database\Eloquent\Factories\HasFactory;
+ *      use Illuminate\Database\Eloquent\Model;
+ *          class Student extends Model
+ *          {
+ *              use HasFactory;
+ *          }
+ * d. Gunakan routes pada web.php untuk menanggapi permintaan http tertentu dari pengguna.
+ * Contoh : 
+ * use Illuminate\Support\Facades\Route; 
+ * use App\Http\Controllers\StudentController;
+ *       Route::get('/', function () {
+ *          return view('welcome');
+ *        });
+ *        Route::get('/greeting', function () {
+ *          return 'Hello World';
+ *        }); 
+ * e. Jalankan server dengan menggunakan perintah: 'php artisan serve'
+ * f. Hentikan server Menggunakan perintah: 'Ctrl+C'
+ * 
+ * II. Views
+ * View bertanggung jawab untuk menampilkan data kepada pengguna,
+ * Tidak memiliki logika bisnis, hanya menangani tampilan. 
+ * Terletak di dalam direktori resources/views.
+ * Langkah - Langkah: 
+ * a.  Buat View Baru: Buat file .blade.php di dalam direktori resources/views.
+ * b. Edit View:
+ * Gunakan Blade, templating engine Laravel, untuk menyusun tampilan.
+ * Tambahkan HTML, CSS, dan elemen-elemen tampilan.
+ * Contoh :
+ * <html>
+ * <head>
+ *      <title>Example View</title>
+ * </head>
+ * <body>
+ *      <h1>Example Data</h1>
+ *      @foreach($data as $item)
+ *      <p>{{ $item->name }}</p>
+ *      @endforeach
+ * </body>
+ * </html>
+ * c. Buka direktori routes\web.php, gunakan routes untuk menanggapi permintaan HTTP dari pengguna, 
+ * Contoh:
+ * use Illuminate\Support\Facades\Route;
+ * use App\Http\Controllers\StudentController;
+ * Route::get('/greeting', function () {
+ * return view('example');
+ * d. Jika tidak menghentikan server sebelumnya, hanya perlu kembali ke browser. Jika sempat dihentikan,
+ * ketik perintah 'php artisan serve' untuk mendapatkan URLnya.
+ * 
+ * III. Controller
+ * Controller bertanggung jawab untuk menerima input dari pengguna, memproses data, dan mengirimkannya ke model atau view.
+ * Fungsi-fungsi di dalam controller merupakan logika aplikasi.
+ * Terletak di dalam direktori app/Http/Controllers.
+ * Langkah-Langkah :
+ * a. Buka terminal
+ * b. Buat Controller Baru: bash php artisan make:controller NamaController
+ * c. Tambahkan fungsi-fungsi (metode) yang akan menangani logika aplikasi.
+ * contoh :
+ * namespace App\Http\Controllers;
+ * use Illuminate\Http\Request;
+ * use App\Models\Example;
+ * class ExampleController extends Controller
+ *     {
+ *        public function index()
+ *      {
+ *      $data = Example::all();
+ *       return view('example.index', ['data' => $data]);
+ *       }
+ *       }
+ * d. Buka direktrori routes\web.php, lalu masukkan kode seperti:
+ * 'use Illuminate\Support\Facades\Route;
+ * use App\Http\Controllers\StudentController
+ * Route::get('/greeting/{id}', [StudentController::class, 'show']);'
+ * e. Jalankan server dengan perintah 'php artisan serve', lalu copy URL dan paste pada browser,
+ *
