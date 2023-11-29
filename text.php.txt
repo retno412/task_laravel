@@ -1,0 +1,153 @@
+Membuat project pertama menggunakan Laravel dengan MVC
+
+1. Buat Project Laravel 
+Buka Xampp kemudian masuk ke shell dan jalankan prompt berikut
+- cd htdocs
+- composer create-project laravel/laravel nama-proyek
+Buka Project yang telah kamu buat di IDE
+
+2. Buat Database melalui migration
+Buka terminal pada IDE mu
+kemudian jalankan prompt berikut 
+- php artisan make:migration create_students_table 
+Kemudian buka folder database/migration dan buka file student table
+Lalu buat attribut yang di inginkan
+ 
+"use Illuminate\Database\Migrations\Migration; // Mengimpor kelas Migration dari namespace Illuminate\Database\Migrations
+use Illuminate\Database\Schema\Blueprint; // Mengimpor kelas Blueprint dari namespace Illuminate\Database\Schema
+use Illuminate\Support\Facades\Schema; // Mengimpor kelas Schema dari namespace Illuminate\Support\Facades
+
+return new class extends Migration // Membuat instance anonim dari kelas Migration
+{
+    public function up(): void // Mendefinisikan metode up() yang akan dijalankan saat migrasi dijalankan
+    {
+        Schema::create('student', function (Blueprint $table) { // Membuat tabel 'student' menggunakan metode create() dari kelas Schema
+            $table->id(); // Menambahkan kolom 'id' dengan tipe data auto-incrementing
+            $table->string('name'); // Menambahkan kolom 'name' dengan tipe data string
+            $table->integer('score'); // Menambahkan kolom 'score' dengan tipe data integer
+            $table->timestamps(); // Menambahkan kolom 'created_at' dan 'updated_at' untuk menyimpan waktu pembuatan dan pembaruan data
+        });
+    }
+    public function down(): void // Mendefinisikan metode down() yang akan dijalankan saat migrasi di-rollback
+    {
+        Schema::dropIfExists('student'); // Menghapus tabel 'student' jika sudah ada
+    }
+};"
+Buka kembali terminal di IDE kemudian jalankan migration dengan cara 
+- php artisan migrate --path=/database/migrations/2023_11_22_091124_create_student_table.php
+
+3. Buat Seeder untuk mengisi data pada database
+Buka terminat di IDE kemudian jalankan 
+php artisan make:seeder StudentSeeder
+Buka folder Database/Seeders dan buka file StudentSeeder
+Untuk memudahkan pengisian database kita akan menggunakan Data Faker berikut kode programnya 
+"<?php
+namespace Database\Seeders; // Mendefinisikan namespace dari kelas StudentSeeder
+use Illuminate\Database\Console\Seeds\WithoutModelEvents; // Mengimpor kelas WithoutModelEvents dari namespace Illuminate\Database\Console\Seeds
+use Illuminate\Database\Seeder; // Mengimpor kelas Seeder dari namespace Illuminate\Database
+use Faker\Factory as Faker; // Mengimpor kelas Factory dari namespace Faker\Factory dan memberikan alias "Faker"
+use Illuminate\Support\Facades\DB; // Mengimpor kelas DB dari namespace Illuminate\Support\Facades
+
+class StudentSeeder extends Seeder // Mendefinisikan kelas StudentSeeder yang merupakan turunan dari kelas Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void // Mendefinisikan metode run() yang akan dijalankan saat melakukan seeding
+    {
+        $faker = Faker::create(); // Membuat objek Faker
+
+        for ($i = 1; $i <= 50; $i++) { // Melakukan perulangan sebanyak 50 kali
+            DB::table('student')->insert([ // Menggunakan metode insert() dari kelas DB untuk memasukkan data ke tabel 'student'
+                'id' => $i, // Menambahkan nilai 'id' dengan nilai $i
+                'name' => $faker->name, // Menambahkan nilai 'name' dengan nama acak yang dihasilkan oleh objek Faker
+                'score' => rand(0, 100), // Menambahkan nilai 'score' dengan nilai acak antara 0 dan 100
+                'created_at' => now(), // Menambahkan nilai 'created_at' dengan waktu saat ini
+                'updated_at' => now(), // Menambahkan nilai 'updated_at' dengan waktu saat ini
+            ]);
+        }
+    }
+}"
+Buka terminal dan jalakan 
+- php artisan db:seed --class=StudentSeeder
+maka database akan terisi dengan data 
+
+4. Buat model untuk mengambil data dari database
+Buka terminal IDE dan jalankan 
+- php artisan make:model Student
+Buka folder app/Models dan file Student 
+Buat kode yang ingin dijalankan 
+*Disini saya akan menampilkan semua data di database 
+"<?php
+namespace App\Models; // Mendefinisikan namespace dari kelas Student
+use Illuminate\Database\Eloquent\Factories\HasFactory; // Mengimpor kelas HasFactory dari namespace Illuminate\Database\Eloquent\Factories
+use Illuminate\Database\Eloquent\Model; // Mengimpor kelas Model dari namespace Illuminate\Database\Eloquent
+use Illuminate\Support\Facades\DB; // Mengimpor kelas DB dari namespace Illuminate\Support\Facades
+
+class Student extends Model // Mendefinisikan kelas Student yang merupakan turunan dari kelas Model
+{
+    use HasFactory; // Menggunakan trait HasFactory
+
+    public function getData() // Mendefinisikan metode getData()
+    {
+        return DB::table('student')->take(50)->get(); // Menggunakan metode table() dari kelas DB untuk mengakses tabel 'student', kemudian menggunakan metode take() untuk mengambil 50 data, dan terakhir menggunakan metode get() untuk mendapatkan data tersebut.
+    }
+}"
+
+5. Buat Controller Untuk menjembatani view dan model
+Buka terminal IDE dan jalankan 
+- php artisan make:controller StudentController
+Buka folder app/Http/Controllers dan file StudentController 
+Panggil model dan view kemudian buat fungsi sebagai berikut 
+
+"use Illuminate\Http\Request; // Mengimpor kelas Request dari namespace Illuminate\Http
+use App\Models\DataModel; // Mengimpor kelas DataModel dari namespace App\Models
+use App\Models\Student; // Mengimpor kelas Student dari namespace App\Models
+
+class StudentController extends Controller
+{
+    public function index()
+    {
+        $student = new Student(); // Membuat objek baru dari kelas Student
+        $data = $student->getData(); // Memanggil metode getData() dari objek Student untuk mendapatkan data
+        return view('example', ['data' => $data]); // Mengembalikan tampilan dengan nama 'example' dan mengirimkan data ke tampilan tersebut dengan menggunakan array asosiatif ['data' => $data]
+    }
+}"
+
+6. Buat view untuk tampilan data pada web 
+Buka terminal IDE dan jalankan 
+- php artisan make:view student
+Buka folder resources/views dan buka file student 
+Buat tampilan seperti yang diinginkan 
+
+"<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+</head>
+<body>
+        <h1>Data</h1>
+    <ul>
+        @foreach ($data as $item) // Melakukan iterasi pada array $data, setiap elemennya disimpan dalam variabel $item
+    	<li>{{ $item->name }}</li> // Menampilkan nilai properti "name" dari setiap elemen $item dalam elemen <li>
+	@endforeach
+    </ul>
+</body>
+</html>"
+
+7. Mengatur Route
+Buka folder routes dan file web
+kemudian konfigurasikan route/jalur dengan method get 
+"Route::get('/data', [StudentController::class, 'index']);"
+
+8. Menjalankan Program 
+Buka xamppp jalankan Apache dan MySQL
+Buka terminal dan jalankan 
+- php artisan serve
+buka browser dan masuk ke 
+http://127.0.0.1:8000/data
+Maka akan tampil semua data dari database 
+
+SELAMAT KAMU TELAH MENYELESAIKAN PROJECT PERTAMAMU MENGGUNAKAN LARAVEL DENGAN MVC !!!
